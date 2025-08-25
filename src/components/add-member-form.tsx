@@ -110,7 +110,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
             <FormItem>
                 <FormLabel>Date de naissance</FormLabel>
                 <FormControl>
-                    <Input type="date" {...field} />
+                    <Input type="text" placeholder="ex: 15/03/1890" {...field} />
                 </FormControl>
                 <FormMessage />
             </FormItem>
