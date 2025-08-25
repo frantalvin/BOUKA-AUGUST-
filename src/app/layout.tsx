@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'FamilleFleurie',
-  description: 'Créez et explorez votre arbre généalogique.',
+  title: 'descends BOUKA AUGUST',
+  description: 'Arbre généalogique de la famille BOUKA AUGUST.',
 };
 
 export default function RootLayout({
