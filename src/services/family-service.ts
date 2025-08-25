@@ -23,7 +23,7 @@ export const getFamilyMembers = async (): Promise<Person[]> => {
 };
 
 export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<Person> => {
-    let profilePictureUrl = personData.profilePictureUrl || null;
+    let profilePictureUrl = personData.profilePictureUrl || '';
 
     if (profilePictureUrl && profilePictureUrl.startsWith('data:image')) {
         const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);

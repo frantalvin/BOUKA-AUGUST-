@@ -56,7 +56,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
   const handleSubmit = (values: AddMemberFormValues) => {
     onSubmit({
       ...values,
-      parentId: values.parentId === "null" || values.parentId === "" ? null : values.parentId,
+      parentId: values.parentId === "" ? null : values.parentId,
     });
     form.reset();
   };
@@ -164,7 +164,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="null">Aucun (Membre racine)</SelectItem>
+                  <SelectItem value="">Aucun (Membre racine)</SelectItem>
                   {existingMembers.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
                       {member.firstName} {member.lastName}
