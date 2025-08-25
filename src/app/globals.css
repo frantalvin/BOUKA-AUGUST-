@@ -125,6 +125,11 @@ body {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    transform: scale(0.8); /* Adjust scale to fit more content */
+    transform-origin: top left;
+  }
+   body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
