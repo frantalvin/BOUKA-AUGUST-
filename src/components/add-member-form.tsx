@@ -55,6 +55,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
     onSubmit({
       ...values,
       dob: values.dob.toISOString().split('T')[0],
+      parentId: values.parentId === "null" ? null : values.parentId,
     });
     form.reset();
   };
@@ -157,7 +158,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="">None (Root Member)</SelectItem>
+                  <SelectItem value="null">None (Root Member)</SelectItem>
                   {existingMembers.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
                       {member.firstName} {member.lastName}
