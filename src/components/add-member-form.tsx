@@ -56,7 +56,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
   const handleSubmit = (values: AddMemberFormValues) => {
     onSubmit({
       ...values,
-      parentId: values.parentId === "null" || values.parentId === null ? null : values.parentId,
+      parentId: values.parentId === "null" || values.parentId === "" ? null : values.parentId,
     });
     form.reset();
   };
