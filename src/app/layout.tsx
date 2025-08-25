@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'descends BOUKA AUGUST',
+  title: 'Descendants de BOUKA AUGUST',
   description: 'Arbre généalogique de la famille BOUKA AUGUST.',
 };
 
