@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -151,7 +152,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
           render={({ field }) => (
             <FormItem>
               <FormLabel>Parent</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value ?? ""}>
+              <Select onValueChange={field.onChange} value={field.value ?? undefined} defaultValue={undefined}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a parent" />
