@@ -9,11 +9,15 @@ import { Header } from "@/components/header";
 import { FamilyTree } from "@/components/family-tree";
 import { AddMemberForm } from "@/components/add-member-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { addFamilyMember } from "@/services/family-service";
+import { useToast } from "@/hooks/use-toast";
+
 
 export default function Home() {
-  const { people, addPerson, isLoading } = useFamily();
+  const { people, setPeople, isLoading } = useFamily();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddMemberOpen, setAddMemberOpen] = useState(false);
+  const { toast } = useToast();
 
   const familyTreeRoots = useMemo(() => buildTree(people), [people]);
 
@@ -26,11 +30,28 @@ export default function Home() {
   }, []);
 
   const handleAddMember = async (data: Omit<Person, "id">) => {
-    const newMember = await addPerson(data);
-    if (newMember) {
+    try {
+      const newMemberData = {
+        ...data,
+        parentId: data.parentId === 'none' ? null : data.parentId,
+      };
+      const newPerson = await addFamilyMember(newMemberData);
+      setPeople((prevPeople) => [...prevPeople, newPerson]);
       setAddMemberOpen(false);
+      toast({
+        title: "Membre ajouté",
+        description: `${newPerson.firstName} ${newPerson.lastName} a été ajouté(e) à l'arbre généalogique.`,
+      });
+    } catch (error) {
+      console.error("Failed to add family member:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Le nouveau membre n'a pas pu être ajouté. Veuillez réessayer.",
+      });
     }
   };
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">

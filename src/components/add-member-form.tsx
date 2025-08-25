@@ -34,7 +34,7 @@ const formSchema = z.object({
 type AddMemberFormValues = z.infer<typeof formSchema>;
 
 interface AddMemberFormProps {
-  onSubmit: (data: Omit<Person, "id">) => Promise<Person | undefined>;
+  onSubmit: (data: Omit<Person, "id">) => void;
   onCancel: () => void;
   existingMembers: Person[];
 }
@@ -54,10 +54,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
   const profilePictureUrlValue = form.watch("profilePictureUrl");
 
   const handleSubmit = (values: AddMemberFormValues) => {
-    onSubmit({
-      ...values,
-      parentId: values.parentId === "none" ? null : values.parentId,
-    });
+    onSubmit(values as Omit<Person, "id">);
     form.reset();
   };
   
