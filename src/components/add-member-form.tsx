@@ -63,7 +63,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
     onSubmit({
       ...values,
       dob: values.dob.toISOString().split('T')[0],
-      parentId: values.parentId === "null" ? null : values.parentId,
+      parentId: values.parentId === "null" || values.parentId === null ? null : values.parentId,
     });
     form.reset();
   };
