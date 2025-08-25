@@ -2,9 +2,6 @@ import {
   collection,
   addDoc,
   getDocs,
-  query,
-  where,
-  documentId,
 } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { db, storage } from '@/lib/firebase';
@@ -31,8 +28,15 @@ export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<P
         profilePictureUrl = await getDownloadURL(uploadResult.ref);
     }
     
-    const newMemberData = { ...personData, profilePictureUrl };
+    // Ensure parentId is either a string or null
+    const parentId = personData.parentId ? personData.parentId : null;
+
+    const newMemberData = { 
+      ...personData, 
+      profilePictureUrl: profilePictureUrl,
+      parentId: parentId,
+    };
 
     const docRef = await addDoc(familyCollectionRef, newMemberData);
-    return { id: docRef.id, ...newMemberData, profilePictureUrl: newMemberData.profilePictureUrl ?? undefined };
+    return { id: docRef.id, ...newMemberData };
 };
