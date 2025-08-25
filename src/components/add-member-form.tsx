@@ -1,12 +1,13 @@
 
 "use client";
 
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, User, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Person } from "@/lib/types";
 
@@ -15,6 +16,7 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,6 +25,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+
 
 const formSchema = z.object({
   firstName: z.string().min(1, "Le prénom est requis."),
@@ -30,7 +34,7 @@ const formSchema = z.object({
   dob: z.date({
     required_error: "Une date de naissance est requise.",
   }),
-  profilePictureUrl: z.string().url("Veuillez entrer une URL valide.").optional().or(z.literal('')),
+  profilePictureUrl: z.string().optional(),
   parentId: z.string().nullable(),
 });
 
@@ -53,6 +57,8 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
     },
   });
 
+  const profilePictureUrlValue = form.watch("profilePictureUrl");
+
   const handleSubmit = (values: AddMemberFormValues) => {
     onSubmit({
       ...values,
@@ -60,6 +66,17 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
       parentId: values.parentId === "null" ? null : values.parentId,
     });
     form.reset();
+  };
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("profilePictureUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -140,10 +157,32 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
           name="profilePictureUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL de la photo de profil (Facultatif)</FormLabel>
-              <FormControl>
-                <Input placeholder="https://exemple.com/photo.jpg" {...field} />
-              </FormControl>
+              <FormLabel>Photo de profil</FormLabel>
+              <div className="flex items-center gap-4">
+                 <Avatar className="h-16 w-16">
+                    <AvatarImage src={field.value} />
+                    <AvatarFallback>
+                      <User className="h-8 w-8 text-muted-foreground" />
+                    </AvatarFallback>
+                  </Avatar>
+                <FormControl>
+                  <Button asChild variant="outline">
+                    <label className="cursor-pointer">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Téléverser
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </Button>
+                </FormControl>
+              </div>
+               <FormDescription>
+                Téléversez une photo depuis votre appareil.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
