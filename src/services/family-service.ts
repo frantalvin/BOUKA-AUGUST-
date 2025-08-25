@@ -1,3 +1,4 @@
+
 import {
   collection,
   addDoc,
@@ -20,7 +21,7 @@ export const getFamilyMembers = async (): Promise<Person[]> => {
 };
 
 export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<Person> => {
-    let profilePictureUrl = personData.profilePictureUrl || '';
+    let profilePictureUrl = personData.profilePictureUrl;
 
     if (profilePictureUrl && profilePictureUrl.startsWith('data:image')) {
         const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);
@@ -28,13 +29,10 @@ export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<P
         profilePictureUrl = await getDownloadURL(uploadResult.ref);
     }
     
-    // Ensure parentId is either a string or null
-    const parentId = personData.parentId ? personData.parentId : null;
-
     const newMemberData = { 
       ...personData, 
-      profilePictureUrl: profilePictureUrl,
-      parentId: parentId,
+      profilePictureUrl: profilePictureUrl || '',
+      parentId: personData.parentId || null,
     };
 
     const docRef = await addDoc(familyCollectionRef, newMemberData);

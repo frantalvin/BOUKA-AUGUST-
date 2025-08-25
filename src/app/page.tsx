@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
@@ -25,8 +26,10 @@ export default function Home() {
   }, []);
 
   const handleAddMember = async (data: Omit<Person, "id">) => {
-    await addPerson(data);
-    setAddMemberOpen(false);
+    const newMember = await addPerson(data);
+    if (newMember) {
+      setAddMemberOpen(false);
+    }
   };
 
   return (

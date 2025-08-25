@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -10,45 +11,43 @@ export const useFamily = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const loadFamilyData = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const members = await getFamilyMembers();
-       if (members.length === 0) {
-        // You might want to seed initial data here if the database is empty
+  useEffect(() => {
+    const loadFamilyData = async () => {
+      setIsLoading(true);
+      try {
+        const members = await getFamilyMembers();
+        setPeople(members);
+      } catch (error) {
+        console.error("Failed to fetch family members:", error);
+        toast({
+          variant: "destructive",
+          title: "Erreur de chargement",
+          description: "Les données de la famille n'ont pas pu être chargées.",
+        });
+      } finally {
+        setIsLoading(false);
       }
-      setPeople(members);
-    } catch (error) {
-      console.error("Failed to fetch family members:", error);
-      toast({
-        variant: "destructive",
-        title: "Erreur de chargement",
-        description: "Les données de la famille n'ont pas pu être chargées.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    };
+    loadFamilyData();
   }, [toast]);
 
-  useEffect(() => {
-    loadFamilyData();
-  }, [loadFamilyData]);
 
-
-  const addPerson = async (personData: Omit<Person, 'id'>) => {
+  const addPerson = async (personData: Omit<Person, 'id'>): Promise<Person | undefined> => {
     try {
-      await addFamilyMember(personData);
+      const newPerson = await addFamilyMember(personData);
+      setPeople((prevPeople) => [...prevPeople, newPerson]);
       toast({
         title: "Membre ajouté",
-        description: `${personData.firstName} ${personData.lastName} a été ajouté(e) à l'arbre généalogique.`,
+        description: `${newPerson.firstName} ${newPerson.lastName} a été ajouté(e) à l'arbre généalogique.`,
       });
-      await loadFamilyData(); // Refresh data
+      return newPerson;
     } catch (error) {
        toast({
         variant: "destructive",
         title: "Erreur",
         description: "Le nouveau membre n'a pas pu être ajouté. Veuillez réessayer.",
       });
+      return undefined;
     }
   };
 
