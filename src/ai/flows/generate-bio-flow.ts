@@ -13,8 +13,8 @@ import {z} from 'genkit';
 const GenerateBioInputSchema = z.object({
   firstName: z.string().describe("The person's first name."),
   lastName: z.string().describe("The person's last name."),
-  dob: z.string().optional().describe("The person's date of birth."),
-  parentName: z.string().optional().describe("The name of the person's parent."),
+  dob: z.string().nullable().optional().describe("The person's date of birth."),
+  parentName: z.string().nullable().optional().describe("The name of the person's parent."),
 });
 export type GenerateBioInput = z.infer<typeof GenerateBioInputSchema>;
 

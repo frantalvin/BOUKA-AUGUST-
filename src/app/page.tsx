@@ -38,7 +38,6 @@ export default function Home() {
   };
 
   const handleExport = useCallback(() => {
-    // Target the .tree element directly for a cleaner capture
     const treeElement = document.querySelector('.tree') as HTMLElement | null;
     if (treeElement) {
       toast({
@@ -55,7 +54,7 @@ export default function Home() {
     }
   }, []);
 
-  const handleAddMember = async (data: Omit<Person, "id">) => {
+ const handleAddMember = async (data: Omit<Person, "id">) => {
     try {
       const newMemberData = {
         ...data,
