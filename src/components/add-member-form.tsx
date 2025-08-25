@@ -119,7 +119,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
         <FormField
           control={form.control}
           name="profilePictureUrl"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Photo de profil</FormLabel>
               <div className="flex items-center gap-4">
