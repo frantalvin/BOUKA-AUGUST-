@@ -62,56 +62,82 @@ body {
 }
 
 @layer components {
-  .tree {
-    @apply inline-block;
-  }
-  .tree ul {
-    @apply pt-5 relative flex;
-    /* Use gap to space children, ensures consistent spacing */
-    gap: 1rem; /* Or any other value */
-  }
-  .tree li {
-    @apply flex flex-col items-center relative;
-  }
+    .tree {
+        @apply inline-block;
+    }
+    .tree ul {
+        @apply pt-5 relative whitespace-nowrap;
+        padding-top: 20px;
+        position: relative;
+        white-space: nowrap;
+        text-align: center;
+        margin: 0;
+    }
 
-  /* Vertical line from parent to children's horizontal line */
-  .tree li > ul::before {
-    content: '';
-    @apply absolute top-0 left-1/2 w-px h-5 bg-muted-foreground;
-  }
+    .tree li {
+        @apply align-top inline-block text-center relative;
+        vertical-align: top;
+        display: inline-block;
+        text-align: center;
+        position: relative;
+        padding: 20px 5px 0 5px;
+    }
 
-  /* Main connector for each node (vertical line up to horizontal) */
-  .tree li::before {
-    content: '';
-    @apply absolute bottom-full left-1/2 w-px h-5 bg-muted-foreground;
-  }
+    /* Vertical line from parent to the horizontal line */
+    .tree li::before, .tree li::after {
+        @apply bg-muted-foreground absolute;
+        content: '';
+        background-color: hsl(var(--muted-foreground));
+        position: absolute;
+    }
 
-  /* Horizontal line connecting siblings */
-  .tree li::after {
-    content: '';
-    @apply absolute top-0 h-px w-full bg-muted-foreground;
-  }
-  
-  /* Hide unnecessary connectors */
-  /* Root node doesn't need an upward vertical line */
-  .tree > ul > li::before {
-    @apply hidden;
-  }
-  
-  /* Single child doesn't need a horizontal line */
-  .tree li:only-child::after {
-    @apply hidden;
-  }
+    /* Horizontal line connecting siblings */
+    .tree li::before {
+        @apply h-full w-px;
+        height: 100%;
+        width: 1px;
+        left: 50%;
+        bottom: 100%;
+        top: 0;
+    }
 
-  /* First child's horizontal line should start from the center */
-  .tree li:first-of-type:not(:only-child)::after {
-    @apply w-1/2 left-1/2;
-  }
+    /* Vertical line going up from a node */
+    .tree li::after {
+        @apply h-px w-full;
+        height: 1px;
+        width: 100%;
+        left: -50%;
+        top: 0;
+    }
 
-  /* Last child's horizontal line should end at the center */
-  .tree li:last-of-type:not(:only-child)::after {
-    @apply w-1/2 right-1/2;
-  }
+    /* Remove left connector from first child and right connector from last child */
+    .tree li:first-of-type::after {
+        @apply left-1/2 w-1/2;
+    }
+
+    .tree li:last-of-type::after {
+        @apply w-1/2;
+    }
+
+    /* Hide the horizontal line for single children */
+    .tree li:only-of-type::after {
+        @apply hidden;
+    }
+
+    /* Vertical line from the parent to the children's horizontal line */
+    .tree ul ul::before {
+        @apply h-5 w-px bg-muted-foreground absolute;
+        content: '';
+        height: 20px;
+        width: 1px;
+        left: 50%;
+        top: 0;
+    }
+
+    /* Hide the top connector for the root element */
+    .tree > ul > li::before {
+        @apply hidden;
+    }
 
   @media print {
     body * {
