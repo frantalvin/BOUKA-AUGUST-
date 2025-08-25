@@ -44,21 +44,31 @@ export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<P
 
 export const updateFamilyMember = async (id: string, personData: Omit<Person, 'id'>): Promise<Person> => {
     const docRef = doc(db, 'family', id);
-    const updatedData: Partial<Omit<Person, 'id'>> = { ...personData };
+    const updatedData: Partial<Person> = { ...personData };
 
+    // If a new photo is being uploaded (it's a data URI)
     if (updatedData.profilePictureUrl && updatedData.profilePictureUrl.startsWith('data:image')) {
         const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);
         const uploadResult = await uploadString(storageRef, updatedData.profilePictureUrl, 'data_url');
         updatedData.profilePictureUrl = await getDownloadURL(uploadResult.ref);
     } else {
-        const existingDoc = await getDoc(docRef);
-        const existingData = existingDoc.data();
-        updatedData.profilePictureUrl = existingData?.profilePictureUrl || null;
+        // If no new photo is uploaded, we keep the old one.
+        // The personData from the form already contains the existing URL or null.
+        // No need to fetch it again. We just ensure it's not undefined.
+        updatedData.profilePictureUrl = personData.profilePictureUrl || null;
     }
     
     updatedData.parentId = personData.parentId === 'none' ? null : personData.parentId;
 
-    await updateDoc(docRef, updatedData);
+    // We pass the fields to update, which might not include all Person fields
+    await updateDoc(docRef, {
+        firstName: updatedData.firstName,
+        lastName: updatedData.lastName,
+        dob: updatedData.dob,
+        profilePictureUrl: updatedData.profilePictureUrl,
+        parentId: updatedData.parentId,
+    });
 
-    return { id, ...updatedData } as Person;
+    // Return the full person object for UI update
+    return { id, ...personData, profilePictureUrl: updatedData.profilePictureUrl } as Person;
 }
