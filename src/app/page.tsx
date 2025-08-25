@@ -55,16 +55,28 @@ export default function Home() {
     }
   };
 
-  const handleEditMember = async (data: Omit<Person, 'id'>) => {
+  const handleEditMember = async (formData: Omit<Person, 'id'>) => {
     if (!editingMember) return;
+  
     try {
-      const updatedData = {
-        ...data,
-        parentId: data.parentId === 'none' ? null : data.parentId,
-      };
+      // Find the original person data to get the existing photo URL if needed
+      const originalPerson = people.find(p => p.id === editingMember.id);
+  
+      // Prepare the data for update
+      const updatedData = { ...formData };
+  
+      // If the profile picture URL in the form is the same as the original,
+      // it means the user hasn't uploaded a new one.
+      // We explicitly keep the original URL.
+      if (formData.profilePictureUrl === originalPerson?.profilePictureUrl) {
+         updatedData.profilePictureUrl = originalPerson.profilePictureUrl;
+      }
+  
+      // The updateFamilyMember service will handle uploading if it's a new data URI.
       const updatedPerson = await updateFamilyMember(editingMember.id, updatedData);
-      setPeople((prevPeople) => 
-        prevPeople.map((p) => p.id === editingMember.id ? updatedPerson : p)
+  
+      setPeople((prevPeople) =>
+        prevPeople.map((p) => (p.id === editingMember.id ? updatedPerson : p))
       );
       setEditMemberOpen(false);
       setEditingMember(null);

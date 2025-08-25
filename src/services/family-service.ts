@@ -5,7 +5,6 @@ import {
   getDocs,
   doc,
   updateDoc,
-  getDoc,
 } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { db, storage } from '@/lib/firebase';
@@ -42,33 +41,29 @@ export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<P
     return { id: docRef.id, ...newMemberData };
 };
 
+
 export const updateFamilyMember = async (id: string, personData: Omit<Person, 'id'>): Promise<Person> => {
-    const docRef = doc(db, 'family', id);
-    const updatedData: Partial<Person> = { ...personData };
+  const docRef = doc(db, 'family', id);
+  const dataToUpdate: Partial<Omit<Person, 'id'>> = { ...personData };
 
-    // If a new photo is being uploaded (it's a data URI)
-    if (updatedData.profilePictureUrl && updatedData.profilePictureUrl.startsWith('data:image')) {
-        const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);
-        const uploadResult = await uploadString(storageRef, updatedData.profilePictureUrl, 'data_url');
-        updatedData.profilePictureUrl = await getDownloadURL(uploadResult.ref);
-    } else {
-        // If no new photo is uploaded, we keep the old one.
-        // The personData from the form already contains the existing URL or null.
-        // No need to fetch it again. We just ensure it's not undefined.
-        updatedData.profilePictureUrl = personData.profilePictureUrl || null;
-    }
-    
-    updatedData.parentId = personData.parentId === 'none' ? null : personData.parentId;
+  // If a new photo is being uploaded (it's a data URI), upload it to storage.
+  if (dataToUpdate.profilePictureUrl && dataToUpdate.profilePictureUrl.startsWith('data:image')) {
+      const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);
+      const uploadResult = await uploadString(storageRef, dataToUpdate.profilePictureUrl, 'data_url');
+      dataToUpdate.profilePictureUrl = await getDownloadURL(uploadResult.ref);
+  }
 
-    // We pass the fields to update, which might not include all Person fields
-    await updateDoc(docRef, {
-        firstName: updatedData.firstName,
-        lastName: updatedData.lastName,
-        dob: updatedData.dob,
-        profilePictureUrl: updatedData.profilePictureUrl,
-        parentId: updatedData.parentId,
-    });
+  // Ensure parentId is null if it's 'none'.
+  dataToUpdate.parentId = personData.parentId === 'none' ? null : personData.parentId;
 
-    // Return the full person object for UI update
-    return { id, ...personData, profilePictureUrl: updatedData.profilePictureUrl } as Person;
-}
+  // Perform the update in Firestore
+  await updateDoc(docRef, dataToUpdate);
+
+  // Return the full, updated person object for UI consistency
+  return {
+      id,
+      ...personData,
+      profilePictureUrl: dataToUpdate.profilePictureUrl,
+      parentId: dataToUpdate.parentId
+  };
+};
