@@ -24,8 +24,8 @@ export default function Home() {
     window.print();
   }, []);
 
-  const handleAddMember = (data: Omit<Person, "id">) => {
-    addPerson(data);
+  const handleAddMember = async (data: Omit<Person, "id">) => {
+    await addPerson(data);
     setAddMemberOpen(false);
   };
 
