@@ -27,12 +27,12 @@ const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string
     <div className="flex justify-center">
       <Card
         className={cn(
-          "w-48 text-center shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1",
+          "w-36 md:w-48 text-center shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1",
           isMatch && "ring-2 ring-accent ring-offset-2 ring-offset-background"
         )}
       >
         <CardHeader className="pb-2">
-          <Avatar className="mx-auto h-20 w-20 border-2 border-primary/50">
+          <Avatar className="mx-auto h-16 w-16 md:h-20 md:w-20 border-2 border-primary/50">
             <AvatarImage 
               src={node.profilePictureUrl || `https://placehold.co/100x100.png`} 
               alt={`${node.firstName} ${node.lastName}`}
@@ -41,8 +41,8 @@ const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string
             <AvatarFallback>{node.firstName[0]}{node.lastName[0]}</AvatarFallback>
           </Avatar>
         </CardHeader>
-        <CardContent className="p-4 pt-0">
-          <CardTitle className="text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
+        <CardContent className="p-2 md:p-4 pt-0">
+          <CardTitle className="text-sm md:text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
           <CardDescription className="text-xs">Born: {formattedDob}</CardDescription>
         </CardContent>
       </Card>
@@ -82,12 +82,12 @@ const LoadingSkeleton = () => (
 
 export function FamilyTree({ roots, searchQuery, isLoading }: FamilyTreeProps) {
   if (isLoading) {
-    return <div className="flex justify-center items-center h-full"><LoadingSkeleton /></div>;
+    return <div className="flex justify-center items-center h-full w-full"><LoadingSkeleton /></div>;
   }
   
   if (!roots || roots.length === 0) {
     return (
-      <div className="text-center text-muted-foreground">
+      <div className="text-center text-muted-foreground w-full self-center">
         <p>Your family tree is empty.</p>
         <p>Click "Add Member" to begin building your legacy.</p>
       </div>
@@ -95,7 +95,7 @@ export function FamilyTree({ roots, searchQuery, isLoading }: FamilyTreeProps) {
   }
 
   return (
-    <div className="tree flex justify-center">
+    <div className="tree flex justify-start md:justify-center w-max">
       <ul className="flex">
         {roots.map((root) => (
           <TreeNodeComponent key={root.id} node={root} searchQuery={searchQuery} />

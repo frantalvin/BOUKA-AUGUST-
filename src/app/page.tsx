@@ -38,7 +38,7 @@ export default function Home() {
         searchQuery={searchQuery}
       />
       <main className="flex-grow flex flex-col p-4 md:p-8 overflow-hidden">
-        <div id="family-tree-container" className="flex-grow w-full h-full overflow-auto p-4">
+        <div id="family-tree-container" className="flex-grow w-full h-full overflow-auto p-4 flex">
           <FamilyTree roots={familyTreeRoots} searchQuery={searchQuery} isLoading={isLoading} />
         </div>
       </main>
