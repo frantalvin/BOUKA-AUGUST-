@@ -62,52 +62,103 @@ body {
 }
 
 @layer components {
+  /* New Flexbox-based Tree CSS */
+  .tree {
+    @apply inline-block;
+  }
   .tree ul {
-    @apply pt-5 relative transition-all duration-500;
+    @apply pt-5 relative flex justify-center;
   }
-
   .tree li {
-    @apply float-left text-center list-none relative pt-5 px-1;
+    @apply flex flex-col items-center relative p-1;
+  }
+  .tree li > div {
+    @apply mx-auto;
+  }
+  .tree li > ul {
+    @apply mt-5;
   }
 
+  /* Connectors */
   .tree li::before,
   .tree li::after {
     content: '';
-    @apply absolute top-0 right-1/2 border-t border-muted-foreground w-1/2 h-5;
+    @apply absolute top-0 w-1/2 h-5 border-t border-muted-foreground;
   }
-
+  .tree li::before {
+    @apply right-1/2;
+  }
   .tree li::after {
-    @apply right-auto left-1/2 border-l border-muted-foreground;
+    @apply left-1/2 border-l border-muted-foreground;
   }
-
-  .tree li:only-child::after,
-  .tree li:only-child::before {
+  
+  /* Remove connectors for single root/child */
+  .tree > ul > li::before, .tree > ul > li::after {
     @apply hidden;
   }
-
-  .tree li:only-child {
-    @apply pt-0;
+  
+  /* Vertical line from parent to children branch */
+  .tree li > ul::before {
+    content: '';
+    @apply absolute top-0 left-1/2 w-0 h-5 border-l border-muted-foreground;
+  }
+  
+  /* Horizontal line for children branch */
+  .tree li:not(:only-child)::after {
+    @apply border-0; /* remove left border for parents with multiple children */
   }
 
-  .tree li:first-child::before,
-  .tree li:last-child::after {
+  /* Horizontal line adjustments for first and last child */
+  .tree li:first-of-type:not(:only-child)::before,
+  .tree li:last-of-type:not(:only-child)::after {
+    @apply w-1/2;
+  }
+
+  .tree li:first-of-type:not(:only-child)::before {
     @apply border-0;
   }
 
-  .tree li:last-child::before {
-    @apply border-r border-muted-foreground rounded-tr-md;
+  .tree li:last-of-type:not(:only-child)::after {
+    @apply border-0;
   }
 
-  .tree li:first-child::after {
+  .tree li:first-of-type:not(:only-child)::after {
     @apply rounded-tl-md;
   }
 
-  .tree ul ul::before {
-    content: '';
-    @apply absolute top-0 left-1/2 border-l border-muted-foreground w-0 h-5;
+  .tree li:last-of-type:not(:only-child)::before {
+    @apply border-r border-muted-foreground rounded-tr-md right-1/2;
   }
 
-  .tree > ul > li > div {
-    @apply mx-auto;
+  /* Hide left-pointing connector for the last child */
+  .tree li:last-of-type::after {
+    @apply border-l-0;
+  }
+   /* Hide right-pointing connector for the first child */
+  .tree li:first-of-type::before {
+    @apply border-t-0;
+  }
+
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #family-tree-container, #family-tree-container * {
+      visibility: visible;
+    }
+    #family-tree-container {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+     .tree {
+      display: inline-block;
+      width: max-content;
+      transform: scale(0.8);
+      transform-origin: top left;
+    }
   }
 }
