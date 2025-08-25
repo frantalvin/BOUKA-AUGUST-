@@ -42,22 +42,20 @@ export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<P
 };
 
 export const updateFamilyMember = async (id: string, personData: Omit<Person, 'id'>): Promise<Person> => {
-    let profilePictureUrl = personData.profilePictureUrl;
-
-    if (profilePictureUrl && profilePictureUrl.startsWith('data:image')) {
-        const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);
-        const uploadResult = await uploadString(storageRef, profilePictureUrl, 'data_url');
-        profilePictureUrl = await getDownloadURL(uploadResult.ref);
-    }
-
-    const updatedMemberData = {
-        ...personData,
-        profilePictureUrl: profilePictureUrl || null,
-        parentId: personData.parentId === 'none' ? null : personData.parentId,
-    };
-
     const docRef = doc(db, 'family', id);
-    await updateDoc(docRef, updatedMemberData);
+    const updatedData: Partial<Omit<Person, 'id'>> = { ...personData };
 
-    return { id, ...updatedMemberData };
+    if (updatedData.profilePictureUrl && updatedData.profilePictureUrl.startsWith('data:image')) {
+        const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);
+        const uploadResult = await uploadString(storageRef, updatedData.profilePictureUrl, 'data_url');
+        updatedData.profilePictureUrl = await getDownloadURL(uploadResult.ref);
+    } else if (updatedData.profilePictureUrl === null || updatedData.profilePictureUrl === undefined) {
+      updatedData.profilePictureUrl = null;
+    }
+    
+    updatedData.parentId = personData.parentId === 'none' ? null : personData.parentId;
+
+    await updateDoc(docRef, updatedData);
+
+    return { id, ...updatedData } as Person;
 }
