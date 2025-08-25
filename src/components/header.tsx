@@ -26,7 +26,7 @@ export function Header({ onAddMember, onSearch, onExport, searchQuery }: HeaderP
             <path d="M2 12h2" />
             <path d="M20 12h2" />
         </svg>
-        <h1 className="text-2xl font-bold font-headline text-foreground">FamilyBloom</h1>
+        <h1 className="text-2xl font-bold font-headline text-foreground">FamilleFleurie</h1>
       </div>
       <div className="flex w-full flex-1 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <form className="ml-auto flex-1 sm:flex-initial">
@@ -34,7 +34,7 @@ export function Header({ onAddMember, onSearch, onExport, searchQuery }: HeaderP
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search member..."
+              placeholder="Rechercher un membre..."
               className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
               value={searchQuery}
               onChange={onSearch}
@@ -43,11 +43,11 @@ export function Header({ onAddMember, onSearch, onExport, searchQuery }: HeaderP
         </form>
         <Button onClick={onAddMember} variant="outline">
           <PlusCircle className="mr-2 h-4 w-4" />
-          Add Member
+          Ajouter un membre
         </Button>
         <Button onClick={onExport} variant="default">
           <FileDown className="mr-2 h-4 w-4" />
-          Export PDF
+          Exporter en PDF
         </Button>
       </div>
     </header>

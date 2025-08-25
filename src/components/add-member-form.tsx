@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Person } from "@/lib/types";
@@ -24,12 +25,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
-  firstName: z.string().min(1, "First name is required."),
-  lastName: z.string().min(1, "Last name is required."),
+  firstName: z.string().min(1, "Le prénom est requis."),
+  lastName: z.string().min(1, "Le nom de famille est requis."),
   dob: z.date({
-    required_error: "A date of birth is required.",
+    required_error: "Une date de naissance est requise.",
   }),
-  profilePictureUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  profilePictureUrl: z.string().url("Veuillez entrer une URL valide.").optional().or(z.literal('')),
   parentId: z.string().nullable(),
 });
 
@@ -70,9 +71,9 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>Prénom</FormLabel>
                 <FormControl>
-                  <Input placeholder="John" {...field} />
+                  <Input placeholder="Jean" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,9 +84,9 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>Nom de famille</FormLabel>
                 <FormControl>
-                  <Input placeholder="Doe" {...field} />
+                  <Input placeholder="Dupont" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +98,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
           name="dob"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
+              <FormLabel>Date de naissance</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -109,9 +110,9 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP")
+                        format(field.value, "PPP", { locale: fr })
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Choisissez une date</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -119,6 +120,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
+                    locale={fr}
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
@@ -138,9 +140,9 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
           name="profilePictureUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Profile Picture URL (Optional)</FormLabel>
+              <FormLabel>URL de la photo de profil (Facultatif)</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/photo.jpg" {...field} />
+                <Input placeholder="https://exemple.com/photo.jpg" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -155,11 +157,11 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
               <Select onValueChange={field.onChange} value={field.value ?? undefined} defaultValue={undefined}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a parent" />
+                    <SelectValue placeholder="Sélectionnez un parent" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="null">None (Root Member)</SelectItem>
+                  <SelectItem value="null">Aucun (Membre racine)</SelectItem>
                   {existingMembers.map((member) => (
                     <SelectItem key={member.id} value={member.id}>
                       {member.firstName} {member.lastName}
@@ -172,8 +174,8 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
           )}
         />
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
-          <Button type="submit">Add Member</Button>
+          <Button type="button" variant="ghost" onClick={onCancel}>Annuler</Button>
+          <Button type="submit">Ajouter un membre</Button>
         </div>
       </form>
     </Form>

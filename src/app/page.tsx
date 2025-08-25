@@ -45,9 +45,9 @@ export default function Home() {
       <Dialog open={isAddMemberOpen} onOpenChange={setAddMemberOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="font-headline">Add a Family Member</DialogTitle>
+            <DialogTitle className="font-headline">Ajouter un membre de la famille</DialogTitle>
             <DialogDescription>
-              Enter the details of the new family member.
+              Entrez les détails du nouveau membre de la famille.
             </DialogDescription>
           </DialogHeader>
           <AddMemberForm

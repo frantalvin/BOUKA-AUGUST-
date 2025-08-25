@@ -17,7 +17,7 @@ const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string
     `${node.firstName} ${node.lastName}`.toLowerCase().includes(searchQuery.toLowerCase());
 
   const dob = new Date(node.dob);
-  const formattedDob = isNaN(dob.getTime()) ? "Invalid Date" : dob.toLocaleDateString(undefined, {
+  const formattedDob = isNaN(dob.getTime()) ? "Date invalide" : dob.toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -43,7 +43,7 @@ const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string
         </CardHeader>
         <CardContent className="p-2 md:p-4 pt-0">
           <CardTitle className="text-sm md:text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
-          <CardDescription className="text-xs">Born: {formattedDob}</CardDescription>
+          <CardDescription className="text-xs">Né(e) le: {formattedDob}</CardDescription>
         </CardContent>
       </Card>
     </div>
@@ -88,8 +88,8 @@ export function FamilyTree({ roots, searchQuery, isLoading }: FamilyTreeProps) {
   if (!roots || roots.length === 0) {
     return (
       <div className="text-center text-muted-foreground w-full self-center">
-        <p>Your family tree is empty.</p>
-        <p>Click "Add Member" to begin building your legacy.</p>
+        <p>Votre arbre généalogique est vide.</p>
+        <p>Cliquez sur "Ajouter un membre" pour commencer à construire votre héritage.</p>
       </div>
     );
   }
