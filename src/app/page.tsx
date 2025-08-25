@@ -111,7 +111,7 @@ export default function Home() {
         const input: GenerateBioInput = {
             firstName: person.firstName,
             lastName: person.lastName,
-            dob: person.dob,
+            dob: person.dob || undefined,
             parentName: parent ? `${parent.firstName} ${parent.lastName}` : undefined,
         };
         const bio = await generateBio(input);

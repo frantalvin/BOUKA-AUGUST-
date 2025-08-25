@@ -13,7 +13,7 @@ import {z} from 'genkit';
 const GenerateBioInputSchema = z.object({
   firstName: z.string().describe("The person's first name."),
   lastName: z.string().describe("The person's last name."),
-  dob: z.string().describe("The person's date of birth."),
+  dob: z.string().optional().describe("The person's date of birth."),
   parentName: z.string().optional().describe("The name of the person's parent."),
 });
 export type GenerateBioInput = z.infer<typeof GenerateBioInputSchema>;
@@ -32,7 +32,7 @@ const bioPrompt = ai.definePrompt({
     Détails :
     - Prénom : {{{firstName}}}
     - Nom de famille : {{{lastName}}}
-    - Date de naissance : {{{dob}}}
+    {{#if dob}}- Date de naissance : {{{dob}}}{{/if}}
     {{#if parentName}}- Parent : {{{parentName}}}{{/if}}
     
     Commence l'histoire de manière engageante. Si c'est un parent, décris-le comme le fondateur/la fondatrice de la lignée. S'il a un parent, mentionne sa filiation.
