@@ -25,12 +25,12 @@ const MemberCard = ({ node, searchQuery, onEditMember, onGenerateBio }: { node: 
     <div className="flex justify-center">
       <Card
         className={cn(
-          "w-36 md:w-48 text-center shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative group",
+          "w-32 md:w-40 text-center shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative group",
           isMatch && "ring-2 ring-accent ring-offset-2 ring-offset-background"
         )}
       >
-        <CardHeader className="pb-2">
-          <Avatar className="mx-auto h-16 w-16 md:h-20 md:w-20 border-2 border-primary/50">
+        <CardHeader className="pb-2 pt-4">
+          <Avatar className="mx-auto h-12 w-12 md:h-16 md:w-16 border-2 border-primary/50">
             <AvatarImage 
               src={node.profilePictureUrl || undefined} 
               alt={`${node.firstName} ${node.lastName}`}
@@ -39,33 +39,33 @@ const MemberCard = ({ node, searchQuery, onEditMember, onGenerateBio }: { node: 
             <AvatarFallback>{node.firstName[0]}{node.lastName[0]}</AvatarFallback>
           </Avatar>
         </CardHeader>
-        <CardContent className="p-2 md:p-4 pt-0">
-          <CardTitle className="text-sm md:text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
+        <CardContent className="p-2 md:p-3 pt-0">
+          <CardTitle className="text-xs md:text-sm font-headline">{node.firstName} {node.lastName}</CardTitle>
           <CardDescription className="text-xs">Né(e) le: {node.dob}</CardDescription>
         </CardContent>
          <div className="absolute top-1 right-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
            <Button
               variant="outline"
               size="icon"
-              className="h-7 w-7"
+              className="h-6 w-6"
               onClick={(e) => {
                   e.stopPropagation();
                   onEditMember(node);
               }}
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className="h-3 w-3" />
               <span className="sr-only">Modifier</span>
             </Button>
             <Button
               variant="outline"
               size="icon"
-              className="h-7 w-7"
+              className="h-6 w-6"
               onClick={(e) => {
                   e.stopPropagation();
                   onGenerateBio(node);
               }}
             >
-              <BookUser className="h-4 w-4" />
+              <BookUser className="h-3 w-3" />
               <span className="sr-only">Générer une biographie</span>
             </Button>
           </div>
