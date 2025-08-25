@@ -39,7 +39,7 @@ export default function Home() {
         parentId: data.parentId === 'none' ? null : data.parentId,
       };
       const newPerson = await addFamilyMember(newMemberData);
-      setPeople((prevPeople) => [...prevPeople, newPerson]); // This "pushes" the new member to the state
+      setPeople((prevPeople) => [...prevPeople, newPerson]);
       setAddMemberOpen(false);
       toast({
         title: "Membre ajouté",
@@ -59,10 +59,8 @@ export default function Home() {
     if (!editingMember) return;
   
     try {
-      // Find the original person data to get the existing photo URL if needed
       const originalPerson = people.find(p => p.id === editingMember.id);
   
-      // Prepare the data for update, ensuring we keep the original photo if a new one isn't provided.
       const updatedData = { 
         ...formData,
         profilePictureUrl: formData.profilePictureUrl || originalPerson?.profilePictureUrl || null
