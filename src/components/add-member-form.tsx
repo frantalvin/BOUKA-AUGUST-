@@ -132,7 +132,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers, initialData
               <FormLabel>Photo de profil</FormLabel>
               <div className="flex items-center gap-4">
                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={profilePictureUrlValue ?? undefined} />
+                    <AvatarImage src={profilePictureUrlValue || undefined} />
                     <AvatarFallback>
                       <User className="h-8 w-8 text-muted-foreground" />
                     </AvatarFallback>

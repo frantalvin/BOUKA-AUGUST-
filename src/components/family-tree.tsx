@@ -38,7 +38,7 @@ const MemberCard = ({ node, searchQuery, onEditMember }: { node: TreeNode; searc
         <CardHeader className="pb-2">
           <Avatar className="mx-auto h-16 w-16 md:h-20 md:w-20 border-2 border-primary/50">
             <AvatarImage 
-              src={node.profilePictureUrl || `https://placehold.co/100x100.png`} 
+              src={node.profilePictureUrl || undefined} 
               alt={`${node.firstName} ${node.lastName}`}
               data-ai-hint="portrait person"
             />
