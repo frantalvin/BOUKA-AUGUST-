@@ -8,9 +8,12 @@ import type { Person } from "@/lib/types";
 import { Header } from "@/components/header";
 import { FamilyTree } from "@/components/family-tree";
 import { AddMemberForm } from "@/components/add-member-form";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { addFamilyMember, updateFamilyMember } from "@/services/family-service";
 import { useToast } from "@/hooks/use-toast";
+import { generateBio, GenerateBioInput } from "@/ai/flows/generate-bio-flow";
+import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 
 
 export default function Home() {
@@ -19,6 +22,11 @@ export default function Home() {
   const [isAddMemberOpen, setAddMemberOpen] = useState(false);
   const [isEditMemberOpen, setEditMemberOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<Person | null>(null);
+  const [isBioOpen, setIsBioOpen] = useState(false);
+  const [bioContent, setBioContent] = useState('');
+  const [isBioLoading, setIsBioLoading] = useState(false);
+  const [bioPerson, setBioPerson] = useState<Person | null>(null);
+
 
   const { toast } = useToast();
 
@@ -92,6 +100,35 @@ export default function Home() {
     setEditMemberOpen(true);
   };
 
+  const handleGenerateBio = async (person: Person) => {
+    setBioPerson(person);
+    setIsBioOpen(true);
+    setIsBioLoading(true);
+    setBioContent('');
+
+    try {
+        const parent = person.parentId ? people.find(p => p.id === person.parentId) : undefined;
+        const input: GenerateBioInput = {
+            firstName: person.firstName,
+            lastName: person.lastName,
+            dob: person.dob,
+            parentName: parent ? `${parent.firstName} ${parent.lastName}` : undefined,
+        };
+        const bio = await generateBio(input);
+        setBioContent(bio);
+    } catch (error) {
+        console.error("Failed to generate biography:", error);
+        setBioContent("La biographie n'a pas pu être générée. Veuillez réessayer.");
+        toast({
+            variant: "destructive",
+            title: "Erreur de l'IA",
+            description: "La biographie n'a pas pu être générée. Veuillez réessayer.",
+        });
+    } finally {
+        setIsBioLoading(false);
+    }
+};
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
@@ -108,6 +145,7 @@ export default function Home() {
             searchQuery={searchQuery} 
             isLoading={isLoading} 
             onEditMember={openEditDialog}
+            onGenerateBio={handleGenerateBio}
           />
         </div>
       </main>
@@ -145,6 +183,28 @@ export default function Home() {
             initialData={editingMember}
             isEditing
           />
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isBioOpen} onOpenChange={setIsBioOpen}>
+        <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle className="font-headline">Biographie de {bioPerson?.firstName} {bioPerson?.lastName}</DialogTitle>
+                <DialogDescription>
+                    Cette biographie a été générée par une intelligence artificielle.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="prose prose-sm dark:prose-invert max-h-[60vh] overflow-y-auto pr-4">
+                {isBioLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                        <Loader className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                ) : (
+                    <p>{bioContent}</p>
+                )}
+            </div>
+            <DialogFooter>
+                <Button onClick={() => setIsBioOpen(false)}>Fermer</Button>
+            </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

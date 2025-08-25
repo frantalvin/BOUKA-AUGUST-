@@ -7,16 +7,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, BookUser } from "lucide-react";
 
 interface FamilyTreeProps {
   roots: TreeNode[];
   searchQuery: string;
   isLoading: boolean;
   onEditMember: (person: Person) => void;
+  onGenerateBio: (person: Person) => void;
 }
 
-const MemberCard = ({ node, searchQuery, onEditMember }: { node: TreeNode; searchQuery: string; onEditMember: (person: Person) => void; }) => {
+const MemberCard = ({ node, searchQuery, onEditMember, onGenerateBio }: { node: TreeNode; searchQuery: string; onEditMember: (person: Person) => void; onGenerateBio: (person: Person) => void; }) => {
   const isMatch = searchQuery.length > 1 &&
     `${node.firstName} ${node.lastName}`.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -42,31 +43,45 @@ const MemberCard = ({ node, searchQuery, onEditMember }: { node: TreeNode; searc
           <CardTitle className="text-sm md:text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
           <CardDescription className="text-xs">Né(e) le: {node.dob}</CardDescription>
         </CardContent>
-         <Button
-            variant="outline"
-            size="icon"
-            className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={(e) => {
-                e.stopPropagation();
-                onEditMember(node);
-            }}
-          >
-            <Pencil className="h-4 w-4" />
-            <span className="sr-only">Modifier</span>
-          </Button>
+         <div className="absolute top-1 right-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+           <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={(e) => {
+                  e.stopPropagation();
+                  onEditMember(node);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+              <span className="sr-only">Modifier</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={(e) => {
+                  e.stopPropagation();
+                  onGenerateBio(node);
+              }}
+            >
+              <BookUser className="h-4 w-4" />
+              <span className="sr-only">Générer une biographie</span>
+            </Button>
+          </div>
       </Card>
     </div>
   );
 };
 
-const TreeNodeComponent = ({ node, searchQuery, onEditMember }: { node: TreeNode; searchQuery: string, onEditMember: (person: Person) => void; }) => {
+const TreeNodeComponent = ({ node, searchQuery, onEditMember, onGenerateBio }: { node: TreeNode; searchQuery: string, onEditMember: (person: Person) => void; onGenerateBio: (person: Person) => void; }) => {
   return (
     <li className="flex flex-col items-center">
-      <MemberCard node={node} searchQuery={searchQuery} onEditMember={onEditMember} />
+      <MemberCard node={node} searchQuery={searchQuery} onEditMember={onEditMember} onGenerateBio={onGenerateBio} />
       {node.children && node.children.length > 0 && (
         <ul className="flex">
           {node.children.map((child) => (
-            <TreeNodeComponent key={child.id} node={child} searchQuery={searchQuery} onEditMember={onEditMember} />
+            <TreeNodeComponent key={child.id} node={child} searchQuery={searchQuery} onEditMember={onEditMember} onGenerateBio={onGenerateBio} />
           ))}
         </ul>
       )}
@@ -89,7 +104,7 @@ const LoadingSkeleton = () => (
     </div>
 )
 
-export function FamilyTree({ roots, searchQuery, isLoading, onEditMember }: FamilyTreeProps) {
+export function FamilyTree({ roots, searchQuery, isLoading, onEditMember, onGenerateBio }: FamilyTreeProps) {
   if (isLoading) {
     return <div className="flex justify-center items-center h-full w-full"><LoadingSkeleton /></div>;
   }
@@ -107,7 +122,7 @@ export function FamilyTree({ roots, searchQuery, isLoading, onEditMember }: Fami
     <div className="tree flex justify-start md:justify-center w-max">
       <ul className="flex">
         {roots.map((root) => (
-          <TreeNodeComponent key={root.id} node={root} searchQuery={searchQuery} onEditMember={onEditMember} />
+          <TreeNodeComponent key={root.id} node={root} searchQuery={searchQuery} onEditMember={onEditMember} onGenerateBio={onGenerateBio}/>
         ))}
       </ul>
     </div>
