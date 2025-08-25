@@ -1,0 +1,106 @@
+"use client";
+
+import type { TreeNode } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface FamilyTreeProps {
+  roots: TreeNode[];
+  searchQuery: string;
+  isLoading: boolean;
+}
+
+const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string }) => {
+  const isMatch = searchQuery.length > 1 &&
+    `${node.firstName} ${node.lastName}`.toLowerCase().includes(searchQuery.toLowerCase());
+
+  const dob = new Date(node.dob);
+  const formattedDob = isNaN(dob.getTime()) ? "Invalid Date" : dob.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return (
+    <div className="flex justify-center">
+      <Card
+        className={cn(
+          "w-48 text-center shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1",
+          isMatch && "ring-2 ring-accent ring-offset-2 ring-offset-background"
+        )}
+      >
+        <CardHeader className="pb-2">
+          <Avatar className="mx-auto h-20 w-20 border-2 border-primary/50">
+            <AvatarImage 
+              src={node.profilePictureUrl || `https://placehold.co/100x100.png`} 
+              alt={`${node.firstName} ${node.lastName}`}
+              data-ai-hint="portrait person"
+            />
+            <AvatarFallback>{node.firstName[0]}{node.lastName[0]}</AvatarFallback>
+          </Avatar>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <CardTitle className="text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
+          <CardDescription className="text-xs">Born: {formattedDob}</CardDescription>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+const TreeNodeComponent = ({ node, searchQuery }: { node: TreeNode; searchQuery: string }) => {
+  return (
+    <li className="flex flex-col items-center">
+      <MemberCard node={node} searchQuery={searchQuery} />
+      {node.children && node.children.length > 0 && (
+        <ul className="flex">
+          {node.children.map((child) => (
+            <TreeNodeComponent key={child.id} node={child} searchQuery={searchQuery} />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+};
+
+const LoadingSkeleton = () => (
+    <div className="flex flex-col items-center space-y-4">
+        <Skeleton className="h-40 w-48 rounded-lg" />
+        <div className="w-px h-8 bg-muted" />
+        <div className="flex space-x-8">
+            <div className="flex flex-col items-center space-y-4">
+                <Skeleton className="h-40 w-48 rounded-lg" />
+            </div>
+            <div className="flex flex-col items-center space-y-4">
+                <Skeleton className="h-40 w-48 rounded-lg" />
+            </div>
+        </div>
+    </div>
+)
+
+export function FamilyTree({ roots, searchQuery, isLoading }: FamilyTreeProps) {
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-full"><LoadingSkeleton /></div>;
+  }
+  
+  if (!roots || roots.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground">
+        <p>Your family tree is empty.</p>
+        <p>Click "Add Member" to begin building your legacy.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="tree flex justify-center">
+      <ul className="flex">
+        {roots.map((root) => (
+          <TreeNodeComponent key={root.id} node={root} searchQuery={searchQuery} />
+        ))}
+      </ul>
+    </div>
+  );
+}
