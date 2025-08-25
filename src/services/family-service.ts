@@ -32,7 +32,7 @@ export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<P
     const newMemberData = { 
       ...personData, 
       profilePictureUrl: profilePictureUrl || '',
-      parentId: personData.parentId || null,
+      parentId: personData.parentId === 'none' ? null : personData.parentId,
     };
 
     const docRef = await addDoc(familyCollectionRef, newMemberData);
