@@ -5,6 +5,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  getDoc,
 } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { db, storage } from '@/lib/firebase';
@@ -49,8 +50,10 @@ export const updateFamilyMember = async (id: string, personData: Omit<Person, 'i
         const storageRef = ref(storage, `profile_pictures/${crypto.randomUUID()}`);
         const uploadResult = await uploadString(storageRef, updatedData.profilePictureUrl, 'data_url');
         updatedData.profilePictureUrl = await getDownloadURL(uploadResult.ref);
-    } else if (updatedData.profilePictureUrl === null || updatedData.profilePictureUrl === undefined) {
-      updatedData.profilePictureUrl = null;
+    } else {
+        const existingDoc = await getDoc(docRef);
+        const existingData = existingDoc.data();
+        updatedData.profilePictureUrl = existingData?.profilePictureUrl || null;
     }
     
     updatedData.parentId = personData.parentId === 'none' ? null : personData.parentId;

@@ -20,13 +20,6 @@ const MemberCard = ({ node, searchQuery, onEditMember }: { node: TreeNode; searc
   const isMatch = searchQuery.length > 1 &&
     `${node.firstName} ${node.lastName}`.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const dob = new Date(node.dob);
-  const formattedDob = isNaN(dob.getTime()) ? "Date invalide" : dob.toLocaleDateString('fr-FR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
   return (
     <div className="flex justify-center">
       <Card
@@ -47,7 +40,7 @@ const MemberCard = ({ node, searchQuery, onEditMember }: { node: TreeNode; searc
         </CardHeader>
         <CardContent className="p-2 md:p-4 pt-0">
           <CardTitle className="text-sm md:text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
-          <CardDescription className="text-xs">Né(e) le: {formattedDob}</CardDescription>
+          <CardDescription className="text-xs">Né(e) le: {node.dob}</CardDescription>
         </CardContent>
          <Button
             variant="outline"
