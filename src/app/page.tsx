@@ -138,7 +138,7 @@ export default function Home() {
         onExport={handleExport}
         searchQuery={searchQuery}
       />
-      <main className="flex-grow flex flex-col p-4 md:p-8 overflow-hidden">
+      <main className="flex-grow flex flex-col p-4 md:p-8">
         <div id="family-tree-container" className="flex-grow w-full h-full overflow-auto p-4 flex">
           <FamilyTree 
             roots={familyTreeRoots} 
