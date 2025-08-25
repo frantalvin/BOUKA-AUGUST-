@@ -63,80 +63,74 @@ body {
 
 @layer components {
     .tree {
-        @apply inline-block;
+      @apply inline-block whitespace-nowrap;
     }
     .tree ul {
-        @apply pt-5 relative whitespace-nowrap;
+        @apply relative inline-block;
         padding-top: 20px;
-        position: relative;
-        white-space: nowrap;
-        text-align: center;
         margin: 0;
+        text-align: center;
+    }
+    .tree ul::before {
+        content: '';
+        @apply absolute top-0 w-px bg-muted-foreground;
+        left: 50%;
+        height: 20px;
     }
 
     .tree li {
-        @apply align-top inline-block text-center relative;
-        vertical-align: top;
-        display: inline-block;
-        text-align: center;
-        position: relative;
+        @apply relative inline-block;
         padding: 20px 5px 0 5px;
+        text-align: center;
+        vertical-align: top;
     }
 
-    /* Vertical line from parent to the horizontal line */
     .tree li::before, .tree li::after {
-        @apply bg-muted-foreground absolute;
         content: '';
-        background-color: hsl(var(--muted-foreground));
-        position: absolute;
+        @apply absolute bg-muted-foreground;
     }
 
-    /* Horizontal line connecting siblings */
+    /* Ligne verticale au-dessus du nœud */
     .tree li::before {
-        @apply h-full w-px;
-        height: 100%;
-        width: 1px;
+        @apply top-0 w-px;
         left: 50%;
-        bottom: 100%;
-        top: 0;
+        height: 20px;
     }
 
-    /* Vertical line going up from a node */
+    /* Ligne horizontale */
     .tree li::after {
-        @apply h-px w-full;
-        height: 1px;
+        @apply top-0 h-px;
+        left: 0;
         width: 100%;
-        left: -50%;
-        top: 0;
     }
-
-    /* Remove left connector from first child and right connector from last child */
+    
+    /* Connecteurs pour les enfants */
     .tree li:first-of-type::after {
-        @apply left-1/2 w-1/2;
+        left: 50%;
+        width: 50%;
     }
 
     .tree li:last-of-type::after {
-        @apply w-1/2;
+        width: 50%;
     }
 
-    /* Hide the horizontal line for single children */
     .tree li:only-of-type::after {
         @apply hidden;
     }
-
-    /* Vertical line from the parent to the children's horizontal line */
-    .tree ul ul::before {
-        @apply h-5 w-px bg-muted-foreground absolute;
-        content: '';
-        height: 20px;
-        width: 1px;
-        left: 50%;
-        top: 0;
+    
+    .tree > ul {
+       @apply pt-0;
     }
 
-    /* Hide the top connector for the root element */
+    .tree > ul::before {
+       @apply hidden;
+    }
+    
     .tree > ul > li::before {
-        @apply hidden;
+       @apply hidden;
+    }
+    .tree > ul > li::after {
+       @apply hidden;
     }
 
   @media print {
