@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { generateBio, GenerateBioInput } from "@/ai/flows/generate-bio-flow";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
+import { exportToPDF } from "@/lib/pdfExport";
 
 
 export default function Home() {
@@ -37,7 +38,20 @@ export default function Home() {
   };
 
   const handleExport = useCallback(() => {
-    window.print();
+    const treeContainer = document.getElementById('family-tree-container');
+    if (treeContainer) {
+      toast({
+        title: "Exportation en cours...",
+        description: "Votre arbre généalogique est en cours de conversion en PDF.",
+      });
+      exportToPDF(treeContainer, 'arbre-genealogique-bouka.pdf');
+    } else {
+       toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "L'élément de l'arbre généalogique n'a pas pu être trouvé pour l'exportation.",
+      });
+    }
   }, []);
 
   const handleAddMember = async (data: Omit<Person, "id">) => {
