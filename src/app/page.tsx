@@ -9,7 +9,7 @@ import { Header } from "@/components/header";
 import { FamilyTree } from "@/components/family-tree";
 import { AddMemberForm } from "@/components/add-member-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { addFamilyMember } from "@/services/family-service";
+import { addFamilyMember, updateFamilyMember } from "@/services/family-service";
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -17,6 +17,9 @@ export default function Home() {
   const { people, setPeople, isLoading } = useFamily();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddMemberOpen, setAddMemberOpen] = useState(false);
+  const [isEditMemberOpen, setEditMemberOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<Person | null>(null);
+
   const { toast } = useToast();
 
   const familyTreeRoots = useMemo(() => buildTree(people), [people]);
@@ -52,6 +55,38 @@ export default function Home() {
     }
   };
 
+  const handleEditMember = async (data: Omit<Person, 'id'>) => {
+    if (!editingMember) return;
+    try {
+      const updatedData = {
+        ...data,
+        parentId: data.parentId === 'none' ? null : data.parentId,
+      };
+      const updatedPerson = await updateFamilyMember(editingMember.id, updatedData);
+      setPeople((prevPeople) => 
+        prevPeople.map((p) => p.id === editingMember.id ? updatedPerson : p)
+      );
+      setEditMemberOpen(false);
+      setEditingMember(null);
+      toast({
+        title: "Membre mis à jour",
+        description: `Les informations de ${updatedPerson.firstName} ${updatedPerson.lastName} ont été mises à jour.`,
+      });
+    } catch (error) {
+      console.error("Failed to update family member:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Les informations du membre n'ont pas pu être mises à jour. Veuillez réessayer.",
+      });
+    }
+  };
+
+  const openEditDialog = (person: Person) => {
+    setEditingMember(person);
+    setEditMemberOpen(true);
+  };
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
@@ -63,7 +98,12 @@ export default function Home() {
       />
       <main className="flex-grow flex flex-col p-4 md:p-8 overflow-hidden">
         <div id="family-tree-container" className="flex-grow w-full h-full overflow-auto p-4 flex">
-          <FamilyTree roots={familyTreeRoots} searchQuery={searchQuery} isLoading={isLoading} />
+          <FamilyTree 
+            roots={familyTreeRoots} 
+            searchQuery={searchQuery} 
+            isLoading={isLoading} 
+            onEditMember={openEditDialog}
+          />
         </div>
       </main>
       <Dialog open={isAddMemberOpen} onOpenChange={setAddMemberOpen}>
@@ -78,6 +118,27 @@ export default function Home() {
             onSubmit={handleAddMember}
             existingMembers={people}
             onCancel={() => setAddMemberOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditMemberOpen} onOpenChange={setEditMemberOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="font-headline">Modifier un membre de la famille</DialogTitle>
+            <DialogDescription>
+              Mettez à jour les détails du membre de la famille.
+            </DialogDescription>
+          </DialogHeader>
+          <AddMemberForm
+            onSubmit={handleEditMember}
+            existingMembers={people.filter(p => p.id !== editingMember?.id)}
+            onCancel={() => {
+              setEditMemberOpen(false);
+              setEditingMember(null);
+            }}
+            initialData={editingMember}
+            isEditing
           />
         </DialogContent>
       </Dialog>

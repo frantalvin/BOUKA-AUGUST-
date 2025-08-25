@@ -1,18 +1,22 @@
+
 "use client";
 
-import type { TreeNode } from "@/lib/types";
+import type { Person, TreeNode } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "./ui/button";
+import { Pencil } from "lucide-react";
 
 interface FamilyTreeProps {
   roots: TreeNode[];
   searchQuery: string;
   isLoading: boolean;
+  onEditMember: (person: Person) => void;
 }
 
-const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string }) => {
+const MemberCard = ({ node, searchQuery, onEditMember }: { node: TreeNode; searchQuery: string; onEditMember: (person: Person) => void; }) => {
   const isMatch = searchQuery.length > 1 &&
     `${node.firstName} ${node.lastName}`.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -27,7 +31,7 @@ const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string
     <div className="flex justify-center">
       <Card
         className={cn(
-          "w-36 md:w-48 text-center shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1",
+          "w-36 md:w-48 text-center shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative group",
           isMatch && "ring-2 ring-accent ring-offset-2 ring-offset-background"
         )}
       >
@@ -45,19 +49,31 @@ const MemberCard = ({ node, searchQuery }: { node: TreeNode; searchQuery: string
           <CardTitle className="text-sm md:text-base font-headline">{node.firstName} {node.lastName}</CardTitle>
           <CardDescription className="text-xs">Né(e) le: {formattedDob}</CardDescription>
         </CardContent>
+         <Button
+            variant="outline"
+            size="icon"
+            className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={(e) => {
+                e.stopPropagation();
+                onEditMember(node);
+            }}
+          >
+            <Pencil className="h-4 w-4" />
+            <span className="sr-only">Modifier</span>
+          </Button>
       </Card>
     </div>
   );
 };
 
-const TreeNodeComponent = ({ node, searchQuery }: { node: TreeNode; searchQuery: string }) => {
+const TreeNodeComponent = ({ node, searchQuery, onEditMember }: { node: TreeNode; searchQuery: string, onEditMember: (person: Person) => void; }) => {
   return (
     <li className="flex flex-col items-center">
-      <MemberCard node={node} searchQuery={searchQuery} />
+      <MemberCard node={node} searchQuery={searchQuery} onEditMember={onEditMember} />
       {node.children && node.children.length > 0 && (
         <ul className="flex">
           {node.children.map((child) => (
-            <TreeNodeComponent key={child.id} node={child} searchQuery={searchQuery} />
+            <TreeNodeComponent key={child.id} node={child} searchQuery={searchQuery} onEditMember={onEditMember} />
           ))}
         </ul>
       )}
@@ -80,7 +96,7 @@ const LoadingSkeleton = () => (
     </div>
 )
 
-export function FamilyTree({ roots, searchQuery, isLoading }: FamilyTreeProps) {
+export function FamilyTree({ roots, searchQuery, isLoading, onEditMember }: FamilyTreeProps) {
   if (isLoading) {
     return <div className="flex justify-center items-center h-full w-full"><LoadingSkeleton /></div>;
   }
@@ -98,7 +114,7 @@ export function FamilyTree({ roots, searchQuery, isLoading }: FamilyTreeProps) {
     <div className="tree flex justify-start md:justify-center w-max">
       <ul className="flex">
         {roots.map((root) => (
-          <TreeNodeComponent key={root.id} node={root} searchQuery={searchQuery} />
+          <TreeNodeComponent key={root.id} node={root} searchQuery={searchQuery} onEditMember={onEditMember} />
         ))}
       </ul>
     </div>

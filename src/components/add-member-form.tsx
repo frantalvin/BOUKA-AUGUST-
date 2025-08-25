@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -37,9 +37,11 @@ interface AddMemberFormProps {
   onSubmit: (data: Omit<Person, "id">) => void;
   onCancel: () => void;
   existingMembers: Person[];
+  initialData?: Person | null;
+  isEditing?: boolean;
 }
 
-export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMemberFormProps) {
+export function AddMemberForm({ onSubmit, onCancel, existingMembers, initialData, isEditing = false }: AddMemberFormProps) {
   const form = useForm<AddMemberFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,6 +52,15 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
       parentId: "none",
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        ...initialData,
+        parentId: initialData.parentId || "none",
+      });
+    }
+  }, [initialData, form]);
 
   const profilePictureUrlValue = form.watch("profilePictureUrl");
 
@@ -175,7 +186,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
         />
         <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="ghost" onClick={onCancel}>Annuler</Button>
-          <Button type="submit">Ajouter un membre</Button>
+          <Button type="submit">{isEditing ? "Enregistrer les modifications" : "Ajouter un membre"}</Button>
         </div>
       </form>
     </Form>
