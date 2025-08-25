@@ -139,6 +139,9 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
                   <Calendar
                     locale={fr}
                     mode="single"
+                    captionLayout="dropdown-buttons"
+                    fromYear={1800}
+                    toYear={new Date().getFullYear()}
                     selected={field.value}
                     onSelect={field.onChange}
                     disabled={(date) =>
@@ -160,7 +163,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
               <FormLabel>Photo de profil</FormLabel>
               <div className="flex items-center gap-4">
                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={field.value ?? undefined} />
+                    <AvatarImage src={profilePictureUrlValue ?? undefined} />
                     <AvatarFallback>
                       <User className="h-8 w-8 text-muted-foreground" />
                     </AvatarFallback>
