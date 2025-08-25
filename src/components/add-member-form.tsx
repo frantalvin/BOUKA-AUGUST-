@@ -34,7 +34,7 @@ const formSchema = z.object({
   dob: z.date({
     required_error: "Une date de naissance est requise.",
   }),
-  profilePictureUrl: z.string().optional(),
+  profilePictureUrl: z.string().nullable().optional(),
   parentId: z.string().nullable(),
 });
 
@@ -52,7 +52,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
     defaultValues: {
       firstName: "",
       lastName: "",
-      profilePictureUrl: "",
+      profilePictureUrl: null,
       parentId: null,
     },
   });
@@ -160,7 +160,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
               <FormLabel>Photo de profil</FormLabel>
               <div className="flex items-center gap-4">
                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={field.value} />
+                    <AvatarImage src={field.value ?? undefined} />
                     <AvatarFallback>
                       <User className="h-8 w-8 text-muted-foreground" />
                     </AvatarFallback>
@@ -193,7 +193,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
           render={({ field }) => (
             <FormItem>
               <FormLabel>Parent</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value ?? undefined} defaultValue={undefined}>
+              <Select onValueChange={field.onChange} value={field.value ?? ""} defaultValue="">
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionnez un parent" />

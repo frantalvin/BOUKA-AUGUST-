@@ -34,5 +34,5 @@ export const addFamilyMember = async (personData: Omit<Person, 'id'>): Promise<P
     const newMemberData = { ...personData, profilePictureUrl };
 
     const docRef = await addDoc(familyCollectionRef, newMemberData);
-    return { id: docRef.id, ...newMemberData };
+    return { id: docRef.id, ...newMemberData, profilePictureUrl: newMemberData.profilePictureUrl ?? undefined };
 };
