@@ -38,13 +38,14 @@ export default function Home() {
   };
 
   const handleExport = useCallback(() => {
-    const treeContainer = document.getElementById('family-tree-container');
-    if (treeContainer) {
+    // Target the .tree element directly for a cleaner capture
+    const treeElement = document.querySelector('.tree') as HTMLElement | null;
+    if (treeElement) {
       toast({
         title: "Exportation en cours...",
         description: "Votre arbre généalogique est en cours de conversion en PDF.",
       });
-      exportToPDF(treeContainer, 'arbre-genealogique-bouka.pdf');
+      exportToPDF(treeElement, 'arbre-genealogique-bouka.pdf');
     } else {
        toast({
         variant: "destructive",

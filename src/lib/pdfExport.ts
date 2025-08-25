@@ -6,7 +6,7 @@ export const exportToPDF = (element: HTMLElement, filename: string) => {
   html2canvas(element, {
     scale: 2, // Increase scale for better quality
     useCORS: true, // Needed for external images
-    backgroundColor: null, // Use transparent background
+    backgroundColor: '#ffffff', // Force a white background to prevent empty/transparent PDFs
     onclone: (document) => {
       // On the cloned document, find the tree and adjust styles for printing
       const treeElement = document.querySelector('.tree') as HTMLElement | null;
