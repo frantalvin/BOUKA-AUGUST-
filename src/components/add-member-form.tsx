@@ -5,14 +5,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { CalendarIcon, User, Upload } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { User, Upload } from "lucide-react";
 import type { Person } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -23,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 
@@ -31,9 +26,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 const formSchema = z.object({
   firstName: z.string().min(1, "Le prénom est requis."),
   lastName: z.string().min(1, "Le nom de famille est requis."),
-  dob: z.date({
-    required_error: "Une date de naissance est requise.",
-  }),
+  dob: z.string().min(1, "La date de naissance est requise."),
   profilePictureUrl: z.string().nullable().optional(),
   parentId: z.string().nullable(),
 });
@@ -52,6 +45,7 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
     defaultValues: {
       firstName: "",
       lastName: "",
+      dob: "",
       profilePictureUrl: null,
       parentId: null,
     },
@@ -62,7 +56,6 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
   const handleSubmit = (values: AddMemberFormValues) => {
     onSubmit({
       ...values,
-      dob: values.dob.toISOString().split('T')[0],
       parentId: values.parentId === "null" || values.parentId === null ? null : values.parentId,
     });
     form.reset();
@@ -114,44 +107,12 @@ export function AddMemberForm({ onSubmit, onCancel, existingMembers }: AddMember
           control={form.control}
           name="dob"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date de naissance</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP", { locale: fr })
-                      ) : (
-                        <span>Choisissez une date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    locale={fr}
-                    mode="single"
-                    captionLayout="dropdown-buttons"
-                    fromYear={1800}
-                    toYear={new Date().getFullYear()}
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1800-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
+            <FormItem>
+                <FormLabel>Date de naissance</FormLabel>
+                <FormControl>
+                    <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
             </FormItem>
           )}
         />
